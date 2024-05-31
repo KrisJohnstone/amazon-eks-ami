@@ -27,6 +27,7 @@
     "remote_folder": null,
     "runc_version": null,
     "security_group_id": null,
+    "selinux_enforced": null,
     "source_ami_filter_name": null,
     "source_ami_id": null,
     "source_ami_owners": null,
@@ -194,6 +195,14 @@
       "script": "{{template_dir}}/provisioners/install-nodeadm.sh",
       "environment_vars": [
         "PROJECT_DIR={{user `working_dir`}}/nodeadm"
+      ]
+    },
+    {
+      "type": "shell",
+      "remote_folder": "{{ user `remote_folder`}}",
+      "script": "{{template_dir}}/provisioners/selinux-enforcement.sh",
+      "environment_vars": [
+        "SELINUX_ENFORCED={{user `selinux_enforced`}}"
       ]
     },
     {
