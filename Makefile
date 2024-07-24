@@ -44,7 +44,7 @@ k8s=1.28
 
 .PHONY: build
 build: ## Build EKS Optimized AMI, default using AL2, use os_distro=al2023 for AL2023 AMI
-	$(MAKE) k8s $(shell hack/latest-binaries.sh $(k8s))
+	$(MAKE) k8s $(shell hack/latest-binaries.sh $(k8s) linux)
 
 .PHONY: fmt
 fmt: ## Format the source files
