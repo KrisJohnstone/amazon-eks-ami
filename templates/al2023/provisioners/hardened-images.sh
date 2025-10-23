@@ -46,8 +46,8 @@ install_node_exporter_patch() {
 ################################################################################
 
 if [[ "$HARDENED_IMAGE" == "true" ]]; then
-  sudo systemctl disable firewalld && \
-  sudo yum install container-selinux selinux-policy-devel -y && \
+  sudo systemctl disable firewalld \
+    && sudo yum install container-selinux selinux-policy-devel -y
   # Install Go 1.24 Patch that allows for read/write to socket.
   install_go_1.24_patch
   # Install node_exporter patch
