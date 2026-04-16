@@ -438,6 +438,7 @@ get_common_logs() {
         cp --force --dereference --recursive /var/log/containers/s3-csi* "${COLLECT_DIR}"/var_log/ 2> /dev/null
         cp --force --dereference --recursive /var/log/containers/mp_*_mount_s3* "${COLLECT_DIR}"/var_log/ 2> /dev/null
         cp --force --dereference --recursive /var/log/containers/eks-pod-identity-agent* "${COLLECT_DIR}"/var_log/ 2> /dev/null
+        cp --force --dereference --recursive /var/log/containers/eks-node-monitoring-agent* "${COLLECT_DIR}"/var_log/ 2> /dev/null
         continue
       fi
       if [[ "${entry}" == "pods" ]]; then
@@ -454,6 +455,7 @@ get_common_logs() {
         cp --force --dereference --recursive /var/log/pods/mount-s3_mp-* "${COLLECT_DIR}"/var_log/ 2> /dev/null
         cp --force --dereference --recursive /var/log/pods/mount-s3_hr-* "${COLLECT_DIR}"/var_log/ 2> /dev/null
         cp --force --dereference --recursive /var/log/pods/kube-system_eks-pod-identity-agent* "${COLLECT_DIR}"/var_log/ 2> /dev/null
+        cp --force --dereference --recursive /var/log/pods/kube-system_eks-node-monitoring-agent* "${COLLECT_DIR}"/var_log/ 2> /dev/null
         continue
       fi
       cp --force --recursive --dereference /var/log/"${entry}" "${COLLECT_DIR}"/var_log/ 2> /dev/null
@@ -643,7 +645,12 @@ get_network_policy_ebpf_info() {
     echo "*** EBPF loaded data ***" >> "${COLLECT_DIR}"/networking/ebpf-data.txt
     LOADED_EBPF=$(/opt/cni/bin/aws-eks-na-cli ebpf loaded-ebpfdata | tee -a "${COLLECT_DIR}"/networking/ebpf-data.txt)
 
-    for mapid in $(echo "$LOADED_EBPF" | grep "Map ID:" | sed 's/Map ID: \+//' | sort | uniq); do
+    for mapid in $(echo "$LOADED_EBPF" | grep -E 'Map Name:[[:space:]]*(cp_ingress_map|cp_egress_map)' -A1 | grep "Map ID:" | sed 's/Map ID: \+//' | sort | uniq); do
+      echo "*** EBPF Maps Data for Map ID $mapid ***" >> "${COLLECT_DIR}"/networking/ebpf-cp-maps-data.txt
+      /opt/cni/bin/aws-eks-na-cli ebpf dump-cp-maps $mapid >> "${COLLECT_DIR}"/networking/ebpf-cp-maps-data.txt
+    done
+
+    for mapid in $(echo "$LOADED_EBPF" | grep -E 'Map Name:[[:space:]]*(ingress_map|egress_map)' -A1 | grep "Map ID:" | sed 's/Map ID: \+//' | sort | uniq); do
       echo "*** EBPF Maps Data for Map ID $mapid ***" >> "${COLLECT_DIR}"/networking/ebpf-maps-data.txt
       /opt/cni/bin/aws-eks-na-cli ebpf dump-maps $mapid >> "${COLLECT_DIR}"/networking/ebpf-maps-data.txt
     done

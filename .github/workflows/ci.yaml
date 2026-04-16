@@ -17,8 +17,8 @@ on:
         type: string
         default: "test"
       os_distros:
-        description: 'Operating System Distributions (comma-separated, e.g., al2,al2023)'
-        default: "al2,al2023"
+        description: 'Operating System Distributions (comma-separated, e.g., al2023)'
+        default: "al2023"
         required: false
         type: string
       k8s_versions:
@@ -47,7 +47,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-    - uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # 5.1.1
+    - uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # 6.1.0
       with:
         aws-region: ${{ secrets.AWS_REGION }}
         role-to-assume: ${{ secrets.AWS_ROLE_ARN_CI }}
@@ -78,7 +78,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
         with:
           ref: 'main'
-      - uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # 5.1.1
+      - uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # 6.1.0
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_CI }}
