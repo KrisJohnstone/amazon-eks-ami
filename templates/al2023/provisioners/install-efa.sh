@@ -55,3 +55,11 @@ sudo ./efa_installer.sh --minimal -y
 cd -
 sudo rm -rf "${EFA_INSTALL_DIR}"
 sudo dnf swap -y gnupg2-full gnupg2-minimal
+
+##########################################################################################
+### Erase efa-nv-peermem on non-NVIDIA AMIs. It owns efa_nv_peermem.conf and loads the  ##
+### nvidia kmod at boot, which fails where there is no nvidia driver.                    ##
+##########################################################################################
+if [ "${ENABLE_ACCELERATOR:-}" != "nvidia" ]; then
+  sudo rpm -e --nodeps efa-nv-peermem 2> /dev/null || true
+fi
